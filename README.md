@@ -2,7 +2,7 @@
 
 Dnas ce dossier, vous trouverez une liste de mes publications sur la science des données dans le sport
 
-- Comparaison de l'amplitude de foulée
+- [Comparaison de l'amplitude de foulée](comparaison-amplitude-foulee-newbalance-vaporfly.html)
 - Comparaison de la vitesse
 - Différence de vitesse entre les catégories de la Sainté-Lyon
 - Estimation de la puissance cyclisme (segments Strava)
