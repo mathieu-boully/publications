@@ -1,0 +1,193 @@
+---
+title: "ACP bike crash"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+[Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/) · Décembre 2020 · 10 min de lecture
+
+Analyse en composantes pricipales des accidents de vélo en france.
+
+Mots clés : *ACP*, *Bike crash*
+
+Technologie utilisée : [RStudio](https://rstudio.com/)
+
+Source de données : [data.gouv.fr](https://www.data.gouv.fr/fr/)
+
+---
+
+## Les données
+
+**Importation des données :**
+
+```{r}
+# chemin du dossier contenant les données
+c <- getwd()
+setwd(c)
+
+data <- read.csv2("accidents-velos.csv", sep = ",", header = T, encoding = "UTF-8")
+```
+
+## Desciption du jeu de données
+
+```{r}
+head(data) # affichage des 5 premières lignes
+str(data) # structure des données
+dim(data)[1] # nb lignes
+dim(data)[2] # nb colonnes
+```
+
+## Nettoyage des données
+
+Conversion des variables *heure* et *largeur.route* en type numérique.
+
+```{r}
+data$heure <- as.numeric(data$heure)
+data$largeur.route <- as.numeric(data$largeur.route)
+```
+
+J'ajoute une colonne *en.agglomeration.num* qui convertit les modalités de la variable *en.agglomeration* en numérique.
+
+```{r}
+for (i in 1:dim(data)[1]) {
+  if (data$en.agglomeration[i] == "oui") {
+    data$en.agglomeration.num[i] <- 1
+  }
+  else {
+    data$en.agglomeration.num[i] <- 2
+  }
+}
+```
+
+J'ajoute une colonne *gravite.accident.num* qui convertit les modalités de la variable *gravite.accident* en numérique.
+
+```{r}
+for (i in 1:dim(data)[1]) {
+  if (data$gravite.accident[i] == "0 - Indemne") {
+    data$gravite.accident.num[i] <- 0
+  }
+  else if (data$gravite.accident[i] == "1 - Blessé léger") {
+    data$gravite.accident.num[i] <- 1
+  }
+  else if (data$gravite.accident[i] == "2 - Blessé hospitalisé") {
+    data$gravite.accident.num[i] <- 2
+  }
+  else {
+    data$gravite.accident.num[i] <- 3
+  }
+}
+```
+
+J'ajoute une colonne *age.num* qui convertit les modalités de la variable *age* en numérique.
+
+```{r}
+library(tidyverse)
+data$age <- str_sub(data$age, 1,2)
+data$age.num <- as.numeric(data$age)
+```
+
+J'ajoute une colonne *sexe.num* qui convertit les modalités de la variable *sexe* en numérique.
+
+```{r}
+for (i in 1:dim(data)[1]) {
+  if (data$sexe[i] == "M") {
+    data$sexe.num[i] <- 0
+  }
+  else {
+    data$sexe.num[i] <- 1
+  }
+}
+```
+
+## Construction de l'ACP
+
+Chargement des paquetages :
+
+```{r}
+library(missMDA) # fournit des fonctions de nettoyage de données
+library(FactoMineR) # fournit des fonctions d'ACP avancées
+library(factoextra) # fournit des graphiques avancées
+```
+
+Je conserve uniquememnt les variables quantitatives pour évaluer le jeu de données :
+
+```{r}
+data.PCA <- data[,c(5,21,40,41,42,43)]
+```
+
+Lancement de l'ACP :
+
+```{r}
+res.comp <- imputePCA(data.PCA, ncp = 2) # étape préliminaire avant d'effectuer l'ACP pour éliminer les valeurs manquantes
+res.pca <- PCA(res.comp$completeObs, graph = F) # lancement de l'algorithme d'ACP
+```
+
+Choix du **nombre d'axes** à conserver pour l'analyse :
+
+```{r}
+res.pca$eig # valeurs propres des composantes pricipales
+fviz_eig(res.pca, addlabels = T, ylim = c(0, 80)) # éboulit des valeurs propres
+```
+
+Le **critère de Kaiser** nous amène à conserver les deux premières composantes principales (valeurs propres > 1 pour une ACP normée).
+
+Avec le **critère coude**, on conserve les deux premiers axes car ils retiennent 44% de l'inertie totale. Les deux premiers axes représentent la moitié de la variabilité des données.
+
+De plus, garder le plan principal facilite l'interprétation des résultats en 2 dimensions.
+
+**Individus :**
+
+```{r}
+ind.cos2 <- res.pca$ind$cos2 # corrélation des individus sur les nouveaux axes
+```
+
+**Variables :**
+
+```{r}
+res.pca$var
+```
+
+Les variables *en.agglomeration.num*, *gravite.accident.num* et *age.num* contribuent à la construction du premiers axes tandis que *heure*, *largeur.route* et *sexe.num * contribuent à la construcution du deuxième axe.
+
+La variable *sexe.num* est égalament bien representée/corrélée sur le troisième axe.
+
+**Cercle de corrélation** des variables sur le plan principale :
+
+```{r}
+fviz_pca_var(res.pca, col.var = "contrib",
+                        gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
+)
+```
+
+On remarque que les variables *en.agglomeration.num* et *gravite.accident.num* sont très proches et varient dans le même sens. Donc, le caractère urbain des déplacements à vélo est plus à risque aux accidents graves. On peut l'expliquer de part la densité du traffic et le manque d'infrastuctures.
+
+La première dimension représente donc les accidents les plus graves.
+
+La variable *age* peut-être mise en relation avec la gravité de l'accident. Ainsi, une personne plus agée est un sujet plus exposé aus accidents graves. Ce lien est à nuancer car l'âge a une corrélation de 0.36 avec la dimension 1.
+
+L'heure de la journée où se produit l'accident est indépendante de la gravité de l'accident.
+
+La largeur de la route et le sexe sont aussi indépendants de la gravité de l'accident.
+
+**Classification des individus** :
+
+```{r}
+res.km <- kmeans(res.pca$ind$coord, centers = 2, nstart = 25)
+grp <- as.factor(res.km$cluster)
+fviz_pca_ind(res.pca, col.ind = grp, # coloration par groupes
+             #palette = couleurs,
+             addEllipses = TRUE, # concentration ellipses
+             legend.title = "Groups")
+```
+
+Sur ce graphique, on distingue bien les accidents graves des accidents plus légers avec une largeur de route plus importante.
+
+---
+Réalisé par [Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/)
+
+Décembre 2020
+
+Voir les autres documents sur la [science des données dans le sport](https://mathieu-boully.000webhostapp.com/sports-analysis/)
+
+[Mon site](https://mathieu-boully.000webhostapp.com/)

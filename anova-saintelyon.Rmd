@@ -1,0 +1,186 @@
+---
+title: "SaintéLyon - Test de l'Anova à 1 facteur"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+[Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/) · Février 2020 · 5 min de lecture
+
+Mis à jour : Novembre 2020
+
+Mots clés : *Trail*, *SaintéLyon*, *Modélisation*, *Anova*
+
+L'objectif est de voir s'il existe une différence significative de vitesse entre les catégories lors de la SaintéLyon. Si oui, repérer statistiquement ses différences entre les différentes catégories de coureurs.
+
+Technologie utilisée : [RStudio](https://rstudio.com/)
+
+---
+
+# Librairies
+
+```{r}
+library(plotly) # visualisations intéractives
+library(knitr)
+```
+
+# Données
+
+## Chargement des données
+
+On charge les données à partir d'un fichier CSV :
+
+```{r}
+df <- read.csv2("SaintéLyon.csv", header = T) # lecture dans un dataframe
+nrow(df) # calcul du nombre de lignes
+names(df) # extraction des noms de colonnes
+```
+
+Il s'agit d'un échantillon de 400 individus décrits selon 2 variables : "Vitesse" "Categirie".
+
+## Contexte statistique
+
+```{r}
+unique(df$Categorie) # identification des modalités de la variable variété
+summary(df) # statistique descriptive
+var(df$Vitesse) # variance
+sd(df$Vitesse) # ecart-type
+tapply(df$Vitesse, df$Categorie, summary) # moyenne, min et max pour chaque categorie sur la variable vitesse
+# différentes vitesses entre les catégories
+tapply(df$Vitesse, df$Categorie, var) #variance pour chaque categorie sur la variable vitesse
+# différentes variances entre les catégories
+```
+
+## Visualisation des données
+
+```{r}
+# représentation des distributions des 4 catégories de coureurs
+graph <- plot_ly(x = df$Categorie, y = df$Vitesse,
+        type = "box")
+graph <- graph %>% layout(title = "Graphique de la distribution de la vitesse par catégorie",
+                          xaxis = list(title = "Catégorie"),
+                          yaxis = list(title = "Vitesse (km/h)"))
+graph
+# on remarque une différence de vitesse entre les catégories.
+# la moyenne des seniors hommes est plus élevé que les autres tandis la moyenne la plus basse concerne les veterans femmes
+# on observe aussi une grande dispersion des vitesse chez les hommes
+# donc la vitesse d'un coureur varie en fonction de la catégorie
+# une variable qualitative (categorie) a une action sur une variable quantitatve (vitesse)
+# la categorie peut influer sur la vitesse
+```
+
+Hypothèse : il semblerait qu'il existe une différence de vitesse entre les catégories.
+On vérifie cette hypothèse à l'aide d'un test de l'Anova.
+
+# Test de l'Anova
+
+## Construction du modèle et hypothèses
+
+```{r}
+# vitesse = moyenne_globale + apha_i + residu
+# où alpha_i est la différence da la moyenne du i-ème groupe avec la moyenne générale
+# H0 : pas de différence de moyenne entre chaque categorie (suivant vitesse)
+# donc H0 : alpha(i) = 0 avec Y = mu + sigma(i) + e(ij)
+# H1 : il y a une influence sur la vitesse en fonction de la categorie
+# donc H1 : alpha(i) =! 0
+
+modele <- aov(df$Vitesse ~ df$Categorie) # construction du modèle
+```
+
+## Validité du modèle
+
+```{r}
+# trois conditions à respecter pour les e(ij) :
+# normalité : e(ij) suivent une loi normale centrée (moyenne = 0)
+# indépendance : covariance nulle
+# homoscédasticité : les e(ij) ont toutes les mêmes variances
+
+# test de l'hypothèse de normalité des résidus
+shapiro.test(residuals(modele)) # test de Shapiro
+# p-value < 0.05
+# donc on conserve H1, les résidus ne sont pas distribués selon une loi normale
+plot(modele, 2, col="red", pch =16) # test de l'hypothèse de normalité des résidus graphiquement (QQ-plot)
+# les points ne sont pas alignés sur la droite donc on rejette H0 (les résidus ne suivent pas une loi normale)
+
+# on ne réalise pas le test de Bartlett car le test de Shapiro n'est pas respecté
+
+# donc on ne peut pas appliquer le test de l'Anova car les conditions ne sont pas respectées
+```
+
+## Transformation des données
+
+```{r}
+df$inv <- 1/df$Vitesse # transformation sur les données (avec l'inverse)
+
+# représentation des distributions des trois categorie de coureurs (avec le log)
+boxplot(df$inv ~ df$Categorie, 
+        main="Graphique des distributions des 4 catégories de la variable Vitesse", 
+        xlab = "Catégorie", 
+        ylab = "Vitesse", 
+        col = "red")
+abline(h=mean(df$inv), col = "orange")
+```
+
+## Construction et validation du nouveau modèle
+
+```{r}
+modele2 <- aov(df$inv ~ df$Categorie)
+
+# on vérifie les conditions avec le nouveau modèle 2
+# H0 : alpha(i) = 0
+# H1 : alpha(i) =! 0
+plot(modele2, 2, col="red", pch =16) # test de l'hypothèse de normalité des résidus graphiquement (QQ-plot)
+# les points sont alignés sur la droite donc on accepte H0, les résidus suivent la loi normale
+
+# test de l'hypothèse de normalité des résidus
+shapiro.test(residuals(modele2)) #  test de Shapiro
+# p-value > 0.05
+# p-value est supérieur au risque donc on accepte H0, on accepte le test de normalité des résidus
+
+# test de l'homoscédasticité à l'aide d'un test de Barlett (variance des résidus)
+bartlett.test(residuals(modele2)~df$Categorie) #test de Bartlett
+# p-value > 0.05
+# les variances sont égales
+# homscédasticité est validée
+```
+
+On peut appliquer le test de l'Anova car les conditions sont respectées.
+
+## Application du test de l'Anova
+
+```{r}
+# hypothèses :
+# H0 : les groupes n'ont pas de différences significatives
+# H1 : au moins un des groupes à une différence significative 
+anova(modele2)
+# la p-value < au risque nous rejettons donc H0
+```
+
+Nous pouvons dire qu'il y a une différence significative entre au moins deux catégories.
+
+```{r}
+TukeyHSD(modele2) # comparaison multiple deux à deux pour repérer les différences
+plot(TukeyHSD(modele2)) # graphiquement
+```
+
+En conclusion, nous pouvons donc affirmer qu'il à une différence significative entre :
+
+  - les seniors hommes et femmes
+ 
+  - les hommes séniors et vétérans
+  
+  - les hommes vétérans et les hommes séniors
+  
+  - les femmmes vétéranes et séniors
+
+---
+Réalisé par [Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/)
+
+Février 2020
+
+Mis à jour : Novembre 2020
+
+Voir les autres documents sur la [science des données dans le sport](https://mathieu-boully.000webhostapp.com/sports-analysis/)
+
+[Mon site](https://mathieu-boully.000webhostapp.com/)

@@ -1,0 +1,172 @@
+---
+title: "Modèle d'estimation de la puissance en cyclisme"
+output:
+  html_document:
+    df_print: paged
+---
+[Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/) · Juillet 2020 · 10 min de lecture
+
+Mots clés : *Data Science*, *Cyclisme*, *Modélisation*, *Régression multiple*, *Strava*
+
+Ce R notebook a pour but d'évaluer un modèle de prédiction de la puissance moyenne sur un segment Strava en pente positive.
+L'objectif est d'établir un calculateur de la puissance grâce à plusieurs facteurs (physiologiques, extérieurs, ...).
+
+Pour construire ce modèle, je m'appuie sur les segments en côte de Strava.
+Après avoir mis en place le modèle, je comparerais les prédictions de puissance moyenne avec la puissance estimé de Strava qui est un très bon prédicteur de la puissance sur de fortes pentes.
+
+Technologie utilisée : [RStudio](https://rstudio.com/)
+
+Source de données : Strava
+
+---
+
+# Données
+
+## Chargement du jeu de données
+
+```{r}
+df <- read.csv2("segments.csv", header = T, encoding = "UTF-8")
+head(df, 5) # affichage des 5 premières lignes
+```
+
+## Correction des données
+
+```{r}
+str(df) # type de données
+df$Poids_ath <- as.numeric(df$Poids_ath) # type numeric
+df$Poids_equ <- as.numeric(df$Poids_equ) # type numeric
+df$Puissance <- as.numeric(df$Puissance) # type numeric
+df$Poids_tot <- df$Poids_ath + df$Poids_equ + df$Poids_vélo
+df <- df[,-c(1)] # suppression de la colonne ID
+```
+
+## Contexte statistique
+
+```{r}
+names(df) # noms des colonnes du jeu de données
+dim(df) # nombre de colonnes et de lignes
+summary(df) # statistique descriptive
+var(df) # variance
+apply(df, 2, sd) # évart-type
+```
+
+Nous avons ici un échantillon de 30 segments décrits selon 6 variables explicatives et 1 variable à expliquer (puissance).
+La pente moyenne est de 6.5% et la distance moyenne des segments est de 2.3km.
+
+## Corrélation des données
+
+```{r}
+plot(df) # combinaison de variables deux à deux
+```
+
+Visuelement, on remarque une corrélation entre la pente et la vitesse. La puissance et la vitesse semblent égaelement être corrélées.
+On peut penser que la vitesse va fortement influencer la puissance dans le modèle. 
+
+```{r}
+cor(df) # coefficients de corrélations
+```
+
+# Modèle linéaire multiple
+
+Je vais tenter d'expliquer la puissance développée sur un segment par différentes variables exogènes.
+En effet, la puissance est un indicateurs important en cyclisme afin de mesurer l'intensité de l'effort fourni.
+La puissance peut se calculer à l'aide d'un capteur mais il est également possible de modéliser la puissance.
+J'utilse la méthode descendante pour trouver le meilleur modèle de prédiction de la puissance.
+
+```{r}
+# construction d'un modèle régressif complet (toutes les variables explicatives)
+modlinXY <- lm(Puissance ~ Distance + Vitesse_moy + Pente + Poids_tot, data = df)
+```
+
+## Critères de qualité du modèle complet
+
+```{r}
+summary(modlinXY)
+AIC(modlinXY)
+BIC(modlinXY)
+```
+
+Le R² ajusté (coefficient de détermination) est de 0.7329 ce qui est convenable.
+La p-value (3.149e-08) est proche de 0 (<0.05) donc le modème est très significatif.
+Il faut maintenant validé le modèle avec le test de Shapiro (normalité des résidus) et de Bartlett (homoscédasticité des résidus).
+
+## Validation du modèle complet
+
+```{r}
+#test de shapiro pour la normalité des résidus
+#H0 : les résidus sont répartis suivant une loi normale
+#H1 : les résidus ne suivent pas une loi normale
+shapiro.test(modlinXY$residuals) #on accepte Ho (résidus suivent une loi normale) car la p-value est grande (<0.05)
+
+#vérification avec le QQ-Plot (normalité graphiquement)
+plot(modlinXY, 2, col = "red", pch = 16) #les points sont alignés sur la droite de normalité
+
+#test de l'homoscédasticité des résidus
+plot(modlinXY, 1) #les points sont uniformément répartis
+
+# variance et homoscédasticité des résidus avec RStudent (-2:2)
+# graphique des résidus stu-densités
+plot(rstudent(modlinXY))
+# la quasi-totalité des résidus se situent entre -2 et 2
+
+# graphique de détection des points à fort effet de levier (valeur de cook supérieur à 1)
+plot(modlinXY,4, main="Graphique de la distance de Cook", col="red")
+# il n'y a pas de distance supérieur à 1 donc les observations ne sont pas influent sauf le segment 4 qui lui influe sur le modèle
+
+```
+
+Nous validons le modèle complet (4 variables explicatives)
+
+# Nouveau modèle
+
+Cnstruction d'un nouveau modèle régressif sans la variable Poids total car elle est constante donc ne donne aucune information sur la puissance.
+Je retire également la variable Distance car elle est peu significative (p-value > 0.05)
+```{r}
+modlinXY2 <- lm(Puissance ~ Vitesse_moy + Pente, data = df)
+```
+
+## Critères de qualité du nouveau modèle
+
+```{r}
+summary(modlinXY2)
+AIC(modlinXY2)
+BIC(modlinXY2)
+```
+
+Par rapport au premier modèle, les indicateurs de qualité sont moins bons.
+Le R² ajusté diminue ainsi que le AIC et BIC augmentent avcec le nouveau modèle (sans la distance)
+
+C'est pourquoi, je conserve le modèle 1 pour expliquer la puissance à 73%.
+
+Les variables qui contribuent aux prédictions de la puissance sont la distance du segment, la vitesse et la pente (en %).
+
+
+# Limites du modèle
+
+Ce modèle ne peut s'appliquer que sur de fortes pentes et de courtes distances car le moèle a été construit à partir des segments de montagnes. De plus, on sait que sur des terrains plat ou en pente, la puissance dépend d'autres paramètres comme le vent ou l'aspiration.
+
+# Prédictions
+
+Je réalise une prédictions de la puissance sur le segment de la montée de Saint-Laurent-la-Roche.
+Distance : 3.7km, Pente : 5.2%, Reccord vitesse : 22.5km/h, Puissance estimé par Strava : 295W
+
+```{r}
+#coefficients du modèle retenu
+summary(modlinXY)$coefficients
+
+#intervalle de confiance
+segment <- data.frame(Distance=c(0.4), Vitesse_moy=c(17.8), Pente=c(5.8), Poids_tot=c(75))
+predict(modlinXY, newdata = segment, interval = "confidence", level = 0.95)
+```
+
+La puissance prédite par Strava est est de 295W tandis que mon modèle prédit une puissance de 282W avec une marge d'erreur à 95% des données de +/- 16W. On a donc une erreur de 4%, ce qui est faible.
+Donc le modèle est plutôt bon prédicteur de la puissance. Il est comparable au modèle utilisé par Strava sur des côtes à fort pourcentage.
+
+---
+Réalisé par [Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/)
+
+Juillet 2020
+
+Voir les autres documents sur la [science des données dans le sport](https://mathieu-boully.000webhostapp.com/sports-analysis/)
+
+[Mon site](https://mathieu-boully.000webhostapp.com/)

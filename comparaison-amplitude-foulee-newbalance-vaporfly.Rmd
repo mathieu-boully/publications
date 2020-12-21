@@ -1,0 +1,147 @@
+---
+title: "Comparaison de la Nike Vaporfly et NewBalance Lante par rapport à la longueur de foulée"
+output:
+  html_document:
+    df_print: paged
+---
+[Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/) · Avril 2020 · 5 min de lecture
+
+Mots clés : *Nike Vaporfly*, *NewBalance Lante V3*, *Test de comparaison*, *Amplitude foulée*
+
+L'objectif est de voir s'il existe une différence d'amplitude de foulée entre 2 paires de chaussures running route. 
+
+Technologie utilisée : [RStudio](https://rstudio.com/)
+
+Source de données : Strava
+
+---
+
+```{r}
+# chargement des librairies
+library(readxl) # librairie readxl pour lire les fichiers Excel
+```
+
+# Données
+
+## Chargement des données
+
+On charge les données à partir d'un fichier CSV :
+
+```{r}
+df <- read_excel("activites_garmin.xlsx") # importation des données
+df <- df[,c(5,18)] # sélection des deux colonnes
+
+# le jeu de donées concerne donc donc 2 variables :
+# - 1 variable quantitative (longueur de la foulée [m])
+# - 1 variable qualitative (chaussures)
+
+str(df) # vérification du type des variables
+
+nrow(df) # calcul du nombre de lignes
+names(df) # extraction des noms de colonnes
+
+# il s'agit d'un échantillon de 98 observations décrits selon 2 variables
+
+head(df, 5) # affichage des 5 premières lignes
+```
+
+## Contexte statistique
+
+```{r}
+#calcule des indicateurs principaux
+summary(df) # statistiques descriptives
+
+tapply(X = df$`Longueur foulees moy`, INDEX = df$Chaussures, mean) # moyenne pour chaque modalité
+tapply(X = df$`Longueur foulees moy`, INDEX = df$Chaussures, sd) # ecart-type pour chaque modalité
+# on s'intéresse aux modalités 'New Balance Lante V3' et 'Nike Zoom Fly Flyknit'
+```
+
+## Création des groupes
+
+```{r}
+g1 <- df[df$Chaussures=="New Balance Lante V3",] # dataframe 1 de la New Balance Lante V3
+g2 <- df[df$Chaussures=="Nike Zoom Fly Flyknit",] # dataframe de la Nike Zoom Fly Flyknit
+```
+
+# Normalité des données
+
+```{r}
+# on fixe un risque de 5%
+# normalité des données graphiquement (QQ-plot) et avec le test de Shapiro
+# hypothèses :
+# H0 : les données suivent une loi normale
+# H1 : les données ne suivent pas une loi normale
+# groupe 1
+# visualisation graphique
+qqnorm(g1$`Longueur foulees moy`, col = "red", pch = 16)
+qqline(g1$`Longueur foulees moy`) # ajout de la bissectrice
+# des points ne sont pas alignés sur la bissectrice
+# test de shapiro
+shapiro.test(g1$`Longueur foulees moy`) # test de Shapiro
+# p-value est inférieure à 0.05 (au seuil)
+# le test de normalité est significatif donc le groupe 1 ne suit pas une loi normale
+# on rejette H0
+
+# groupe 2
+# visualisation graphique
+qqnorm(g2$`Longueur foulees moy`, col = "red", pch = 16)
+qqline(g2$`Longueur foulees moy`) # ajout de la bissectrice
+# des points ne sont pas alignés sur la bissectrice
+# test de shapiro
+shapiro.test(g2$`Longueur foulees moy`) # test de Shapiro
+# p-value est inférieure à 0.05 (au seuil)
+# le test de normalité est significatif donc le groupe 2 ne suit pas une loi normale
+# on rejette H0
+```
+
+# Test non paramétrique de comparaison de moyennes
+
+```{r}
+# on souhaite savoir si il y a une différence entre la NB et la Nike
+# on réalise un test non paramétrique de comparaison de moyennes
+# on prend un rique de 5%
+# hypothèses
+# H0 : mu1 = mu2
+# H1 : mu1 =! mu2
+wilcox.test(g1$`Longueur foulees moy`, g2$`Longueur foulees moy`)
+# p-value < 0.05
+# donc on rejette H0
+# il y a une différence significative de vitesse entre les deux chaussures
+# on a donc noté une différence de vitesse mais est-ce que la Nike est plus rapide que la NB aux vues des données ?
+```
+
+# Vitesse de la Nike et longueur de foulée 
+
+```{r}
+# on souhaite savoir si la Nike a une plus grande amplitude que la NB
+# on réalise un test de comparaison de moyennes entre Nike et NB
+
+# test de comparaison de moyennes
+# on prend un rique de 5%
+# hypothèes
+# H0 : mu1 = mu2
+# H1 : mu2 > mu1
+wilcox.test(g2$`Longueur foulees moy`, g1$`Longueur foulees moy`, alternative = "greater")
+# p-value < 0.05
+# donc on rejette H0
+# la performance de la Nike est significativement supérieure à la New Balance
+# visualisation graphique
+boxplot(g1$`Longueur foulees moy`, g2$`Longueur foulees moy`, names=c("New Balance", "Nike"), main = "Amplitude entre les 2 chaussures", ylab = "Longueur de la foulée [m]", col = "red")
+# avec le boxplot, on remarque une différence de moyenne 
+# graphiquement et statistiquement, la longeur de foulée de la Nike est supérieure à la New Balance
+# on peut expliquer cette amplitude car la vitesse est fortement corrélée avec la longueur de foulée. 
+df2 <- read_excel("activites_garmin.xlsx")
+cor(df2$`Vitesse moy`, df2$`Longueur foulees moy`, method = "kendall") # coefficient de corrélation avec kendall car les deux séries ne suivent par de loi normale
+
+```
+
+En effet, dans l'étude précédente, on a montré que la Nike a une vitesse plus élevé que la NB donc la longueur de la foulée influe positivement sur la vitesse. l'augmentation de la longueur de la foulée chez la nike par rapport à la NB est du à la plaque de carbonne et à son drop plus important.
+
+---
+Réalisé par [Mathieu Boully](https://www.linkedin.com/in/mathieu-boully-61b910175/)
+
+Avril 2020
+
+Voir les autres documents sur la [science des données dans le sport](https://mathieu-boully.000webhostapp.com/sports-analysis/)
+
+[Mon site](https://mathieu-boully.000webhostapp.com/)
