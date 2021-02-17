@@ -11,7 +11,7 @@ Dans ce dossier, vous trouverez une liste de mes publications sur la science des
 
 ## Contact
 
-Mathieu.boully@hotmail.com
+Mathieu.boully@univ-tlse3.fr
 
 Consultez [mes autres publications.](https://mathieu-boully.000webhostapp.com/sports-analysis/)
 
