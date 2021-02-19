@@ -1,6 +1,6 @@
 ## Publications
 
-Dans ce dossier, vous trouverez une liste de mes publications sur la science des données dans le sport :
+Dans ce dossier, vous trouverez une liste de mes publications sur la science des données :
 
 - [Différence de vitesse entre les catégories de la SaintéLyon](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/anova-saintelyon.htmll)
 - [Comparaison de la vitesse](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/comparaison-vitesse-newbalance-vaporfly.html)
