@@ -5,9 +5,9 @@ Dans ce dossier, vous trouverez une liste de mes publications sur la science des
 - [Différence de vitesse entre les catégories de la SaintéLyon](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/anova-saintelyon.htmll)
 - [Comparaison de la vitesse](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/comparaison-vitesse-newbalance-vaporfly.html)
 - [Comparaison de l'amplitude de la foulée](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/comparaison-amplitude-foulee-newbalance-vaporfly.html)
-- [Estimation de la puissance cyclisme (segments Strava)](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/comparaison-amplitude-foulee-newbalance-vaporfly.html)
-- [Facteurs de performance en course à pied](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/facteurs-de-performance-en-course-a-pied.pdf)
-- [Gravité des accidents à vélo](https://mathieu-boully.000webhostapp.com/sports-analysis/documents/acp-bike-crash.html)
+- [Estimation de la puissance cyclisme (segments Strava)](https://mathieuboully-datascience.000webhostapp.com/publications/comparaison-amplitude-foulee-newbalance-vaporfly.html)
+- [Facteurs de performance en course à pied](https://mathieuboully-datascience.000webhostapp.com/publications/facteurs-de-performance-en-course-a-pied.pdf)
+- [Gravité des accidents à vélo](https://mathieuboully-datascience.000webhostapp.com/publications/acp-bike-crash.html)
 
 ## Contact
 
