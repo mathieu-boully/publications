@@ -13,6 +13,6 @@ Dans ce dossier, vous trouverez une liste de mes publications sur la science des
 
 Mathieu.boully@univ-tlse3.fr
 
-Consultez [mes autres publications.](https://mathieuboully-datascience.000webhostapp.com/)
+Consultez [mes autres publications.](https://mathieuboully-datascience.000webhostapp.com/publications/)
 
 [Linkedin.](https://www.linkedin.com/in/mathieu-boully-61b910175/)
