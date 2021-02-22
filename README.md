@@ -2,7 +2,7 @@
 
 Dans ce dossier, vous trouverez une liste de mes publications sur la science des données :
 
-- [Différence de vitesse entre les catégories de la SaintéLyon]https://mathieuboully-datascience.000webhostapp.com/publications/anova-saintelyon.html)
+- [Différence de vitesse entre les catégories de la SaintéLyon](https://mathieuboully-datascience.000webhostapp.com/publications/anova-saintelyon.html)
 - [Comparaison de la vitesse]()
 - [Comparaison de l'amplitude de la foulée]()
 - [Estimation de la puissance cyclisme (segments Strava)](https://mathieuboully-datascience.000webhostapp.com/publications/modele-predictif-puissance-cyclisme.html)
