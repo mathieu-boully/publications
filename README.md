@@ -1,4 +1,4 @@
-## Publications
+## Réalisations
 
 Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données :
 
