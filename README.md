@@ -15,4 +15,4 @@ mathieu.boully@hotmail.com
 
 Consultez [mes autres publications.](https://mathieuboully-datascience.000webhostapp.com/realisations/)
 
-[Linkedin.](https://www.linkedin.com/in/mathieu-boully-61b910175/)
+[LinkedIn](https://www.linkedin.com/in/mathieu-boully-61b910175/)
