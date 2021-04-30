@@ -11,7 +11,7 @@ Dans ce dossier, vous trouverez une liste de mes publications sur la science des
 
 ## Contact
 
-Mathieu.boully@univ-tlse3.fr
+mathieu.boully@hotmail.com
 
 Consultez [mes autres publications.](https://mathieuboully-datascience.000webhostapp.com/realisations/)
 
