@@ -1,6 +1,8 @@
 ## Publications
 
-Dans ce dossier, vous trouverez une liste de mes publications sur la science des données :
+Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données :
+
+Méthodes utilisées : Régression, Anova, Classification, ACP
 
 - [Différence de vitesse entre les catégories de la SaintéLyon](https://mathieuboully-datascience.000webhostapp.com/realisations/anova-saintelyon.html)
 - [Comparaison de la vitesse](https://mathieuboully-datascience.000webhostapp.com/realisations/comparaison-vitesse-newbalance-vaporfly.html)
@@ -12,7 +14,5 @@ Dans ce dossier, vous trouverez une liste de mes publications sur la science des
 ## Contact
 
 mathieu.boully@hotmail.com
-
-Consultez [mes autres publications.](https://mathieuboully-datascience.000webhostapp.com/realisations/)
 
 [LinkedIn](https://www.linkedin.com/in/mathieu-boully-61b910175/)
