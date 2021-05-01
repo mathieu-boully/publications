@@ -2,7 +2,7 @@
 
 Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données :
 
-Méthodes utilisées : Régression, Anova, Classification, ACP
+Méthodes utilisées : Prédiction, Régression, Anova, Classification, ACP
 
 - [Différence de vitesse entre les catégories de la SaintéLyon](https://mathieuboully-datascience.000webhostapp.com/realisations/anova-saintelyon.html)
 - [Comparaison de la vitesse](https://mathieuboully-datascience.000webhostapp.com/realisations/comparaison-vitesse-newbalance-vaporfly.html)
