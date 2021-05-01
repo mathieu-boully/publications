@@ -14,6 +14,6 @@ Méthodes utilisées : Régression, Anova, Classification, ACP
 
 ## Contact
 
-mathieu.boully@hotmail.com
+mathieu.boully@univ-tlse3.fr
 
 [LinkedIn](https://www.linkedin.com/in/mathieu-boully-61b910175/)
