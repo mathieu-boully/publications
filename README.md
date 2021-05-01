@@ -10,9 +10,6 @@ Langages de programmation : R, Python
 - [Comparaison de la vitesse](https://mathieuboully-datascience.000webhostapp.com/realisations/comparaison-vitesse-newbalance-vaporfly.html)
 - [Comparaison de l'amplitude de la foulée](https://mathieuboully-datascience.000webhostapp.com/realisations/comparaison-longueur-foulee-newbalance-vaporfly.html)
 - [Estimation de la puissance cyclisme (segments Strava)](https://mathieuboully-datascience.000webhostapp.com/realisations/modele-predictif-puissance-cyclisme.html)
-- [Facteurs de performance en course à pied](https://mathieuboully-datascience.000webhostapp.com/realisations/facteurs-de-performance-en-course-a-pied.pdf)
-
-
 
 - [Modèles pour prédire les survivants du Titanic (Machine Learning)](https://github.com/mathieuboully/realisations/blob/master/titanic_ml.md)
 - [Gravité des accidents à vélo](https://mathieuboully-datascience.000webhostapp.com/realisations/acp-bike-crash.html) 
