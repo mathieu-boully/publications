@@ -1,8 +1,8 @@
 ## Réalisations
 
-Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données :
+Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données
 
-Méthodes utilisées : Prédiction, Régression, Anova, Classification, ACP
+Méthodes utilisées : *Prédiction*, *Régression*, *Anova*, *Classification*, *ACP*
 
 Langages de programmation : R, Python
 
