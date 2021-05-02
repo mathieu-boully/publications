@@ -6,6 +6,7 @@ Méthodes utilisées : Prédiction, Régression, Anova, Classification, ACP
 
 Langages de programmation : R, Python
 
+- [Pollution et mortalité (Régression)](https://github.com/mathieuboully/realisations/blob/master/pollution_regression.md) 
 - [Modèles pour prédire les survivants du Titanic (Machine Learning)](https://github.com/mathieuboully/realisations/blob/master/titanic_ml.md)
 - [Accidents de vélo en France (ACP)](https://github.com/mathieuboully/realisations/blob/master/bike_crash_acp.md) 
 - [Facteurs de performance de la course à pied (ACP)](https://github.com/mathieuboully/realisations/blob/master/course_a_pied_acp.pdf)
