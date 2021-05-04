@@ -1,6 +1,6 @@
 ## Réalisations
 
-Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données
+Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données. Les rapports sont sous la forme de Notebook.
 
 Méthodes utilisées : *Prédiction*, *Régression*, *Anova*, *Classification*, *ACP*
 
