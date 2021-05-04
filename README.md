@@ -2,7 +2,7 @@
 
 Dans ce dossier, vous trouverez une liste de mes réalisations sur la science des données. Les rapports sont sous la forme de Notebook.
 
-Méthodes utilisées : *Prédiction*, *Régression*, *Anova*, *Classification*, *ACP*
+Méthodes utilisées : *Prédiction*, *Régression*, *Anova*, *Apprentissage artificiel*, *Classification*, *Data Mining*, *ACP*
 
 Langages de programmation : R, Python
 
